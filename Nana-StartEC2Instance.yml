@@ -1,0 +1,105 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Start EC2 instance
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  InstanceId:
+    type: String
+    description: (Required) EC2 Instance to start
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  # Get the current state of the instance
+  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  - name: GetState
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: DescribeInstanceStatus
+      InstanceIds: "{{InstanceId}}"
+    outputs:
+      - Name: State
+        Type: String
+        Selector: "$.InstanceStatuses[0].InstanceState.Name"
+  
+  # Link to EC2 instance lifecycle - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html
+  # Based on the current state, choose what to do next:
+  #   Stopped                     - start instance
+  #   Stopping                    - wait until stopped, then start instance
+  #   Rebooting, Pending, running - wait until running state
+  #   ShuttingDown, Terminated    - Cannot start, breathe easy
+  #
+  #   Note: Default will be chosen when none of the previous conditions match
+  - name: ChooseNextAction
+    action: aws:branch
+    inputs:
+      Choices: 
+        - Variable: "{{GetState.State}}"
+          EqualsIgnoreCase: "Stopped"
+          NextStep: "StartInstance"
+        - Variable: "{{GetState.State}}"
+          EqualsIgnoreCase: "Stopping"
+          NextStep: "WaitUntilStopped"
+        - Or:
+            - Variable: "{{GetState.State}}"
+              EqualsIgnoreCase: "Rebooting"
+            - Variable: "{{GetState.State}}"
+              EqualsIgnoreCase: "Pending"
+            - Variable: "{{GetState.State}}"
+              EqualsIgnoreCase: "Running"
+          NextStep: "WaitUntilRunning"
+      Default:
+        BreatheEasy
+  
+  # Wait until EC2 instance reaches stopped state
+  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  - name: WaitUntilStopped
+    action: aws:waitForAwsResourceProperty
+    maxAttempts: 10
+    timeoutSeconds: 600
+    inputs:
+      Service: ec2
+      Api: DescribeInstanceStatus
+      InstanceIds: "{{InstanceId}}"
+      PropertySelector: "$.InstanceStatuses[0].InstanceState.Name"
+      DesiredValues: ["stopped"]
+  
+  # Start an EC2 instance using start instance API
+  # API: aws ec2 start-instances --instance-ids <instance id>
+  - name: StartInstance
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: StartInstances
+      InstanceIds: "{{InstanceId}}"
+  
+  # Wait until EC2 instance state is running
+  #
+  # Note:The execution needs to end, if this step in document is reached
+  #      (this step will be reached in cases where starting EC2 instance is possible)
+  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  - name: WaitUntilRunning
+    action: aws:waitForAwsResourceProperty
+    maxAttempts: 10
+    timeoutSeconds: 600
+    inputs:
+      Service: ec2
+      Api: DescribeInstanceStatus
+      InstanceIds: "{{InstanceId}}"
+      PropertySelector: "$.InstanceStatuses[0].InstanceState.Name"
+      DesiredValues: ["running"]
+    isEnd: true
+  
+  # State is shutting down or terminated, can't start, Breathe easy !!!
+  - name: BreatheEasy
+    action: aws:sleep
+    inputs:
+      Duration: PT1S
+    isEnd: true
+...
