@@ -16,17 +16,18 @@ parameters:
     default: ""
 mainSteps:
   # Get the current state of the instance
-  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  # API: aws ec2 describe-instances --instance-ids <instance id>
   - name: GetState
     action: aws:executeAwsApi
     inputs:
       Service: ec2
-      Api: DescribeInstanceStatus
-      InstanceIds: "{{InstanceId}}"
+      Api: DescribeInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
     outputs:
       - Name: State
         Type: String
-        Selector: "$.InstanceStatuses[0].InstanceState.Name"
+        Selector: "$.Reservations[0].Instances[0].State.Name"
   
   # Link to EC2 instance lifecycle - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html
   # Based on the current state, choose what to do next:
@@ -58,16 +59,17 @@ mainSteps:
         BreatheEasy
   
   # Wait until EC2 instance reaches stopped state
-  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  # API: aws ec2 describe-instances --instance-ids <instance id>
   - name: WaitUntilStopped
     action: aws:waitForAwsResourceProperty
     maxAttempts: 10
     timeoutSeconds: 600
     inputs:
       Service: ec2
-      Api: DescribeInstanceStatus
-      InstanceIds: "{{InstanceId}}"
-      PropertySelector: "$.InstanceStatuses[0].InstanceState.Name"
+      Api: DescribeInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+      PropertySelector: "$.Reservations[0].Instances[0].State.Name"
       DesiredValues: ["stopped"]
   
   # Start an EC2 instance using start instance API
@@ -77,22 +79,24 @@ mainSteps:
     inputs:
       Service: ec2
       Api: StartInstances
-      InstanceIds: "{{InstanceId}}"
+      InstanceIds: 
+        - "{{InstanceId}}"
   
   # Wait until EC2 instance state is running
   #
   # Note:The execution needs to end, if this step in document is reached
   #      (this step will be reached in cases where starting EC2 instance is possible)
-  # API: aws ec2 describe-instance-status --instance-ids <instance id>
+  # API: aws ec2 describe-instances --instance-ids <instance id>
   - name: WaitUntilRunning
     action: aws:waitForAwsResourceProperty
     maxAttempts: 10
     timeoutSeconds: 600
     inputs:
       Service: ec2
-      Api: DescribeInstanceStatus
-      InstanceIds: "{{InstanceId}}"
-      PropertySelector: "$.InstanceStatuses[0].InstanceState.Name"
+      Api: DescribeInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+      PropertySelector: "$.Reservations[0].Instances[0].State.Name"
       DesiredValues: ["running"]
     isEnd: true
   
