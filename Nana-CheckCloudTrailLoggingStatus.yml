@@ -10,6 +10,7 @@ parameters:
   Name:
     type: String
     description: (Required) Name of cloud trail
+    default: "NanasSecretTrail"
   Email:
     type: String
     description: (Required) Email to notify if logging is not enabled
