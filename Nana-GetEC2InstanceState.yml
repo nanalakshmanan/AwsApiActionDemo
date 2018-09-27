@@ -3,13 +3,13 @@
 #
 #
 ---
-description: Start EC2 instance
+description: Get EC2 instance state
 schemaVersion: "0.3"
 assumeRole: "{{ AutomationAssumeRole }}"
 parameters:
   InstanceId:
     type: String
-    description: (Required) EC2 Instance to start
+    description: (Required) EC2 Instance id to get state
   AutomationAssumeRole:
     type: String
     description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
