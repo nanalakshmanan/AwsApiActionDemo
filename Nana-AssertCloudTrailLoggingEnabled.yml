@@ -1,0 +1,28 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Checks to see if cloud trail logging is enabled in the account
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  Name:
+    type: String
+    description: (Required) Name of cloud trail
+    default: "NanasSecretTrail"
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  # aws cloudtrail get-trail-status --name <trailname>
+  - name: AssertTrailStatus
+    action: aws:assertAwsResourceProperty
+    inputs:
+      Service: cloudtrail
+      Api: GetTrailStatus
+      Name: "{{Name}}"
+      PropertySelector: "$.IsLogging"
+      DesiredValues: ["True"]  
+...
