@@ -1,0 +1,141 @@
+{
+    "Reservations": [
+        {
+            "Instances": [
+                {
+                    "Monitoring": {
+                        "State": "disabled"
+                    }, 
+                    "PublicDnsName": "ec2-54-175-40-48.compute-1.amazonaws.com", 
+                    "State": {
+                        "Code": 16, 
+                        "Name": "running"
+                    }, 
+                    "EbsOptimized": false, 
+                    "LaunchTime": "2018-09-27T03:00:31.000Z", 
+                    "PublicIpAddress": "54.175.40.48", 
+                    "PrivateIpAddress": "172.31.77.176", 
+                    "ProductCodes": [], 
+                    "VpcId": "vpc-9920dce0", 
+                    "StateTransitionReason": "", 
+                    "InstanceId": "i-02c2a915737d8cbe8", 
+                    "EnaSupport": true, 
+                    "ImageId": "ami-97785bed", 
+                    "PrivateDnsName": "ip-172-31-77-176.ec2.internal", 
+                    "KeyName": "NanasTestKeyPair", 
+                    "SecurityGroups": [
+                        {
+                            "GroupName": "SSHAccess", 
+                            "GroupId": "sg-06e7449f278b62c42"
+                        }
+                    ], 
+                    "ClientToken": "Linux-Insta-1UMG3JR2DDDNR", 
+                    "SubnetId": "subnet-b928e495", 
+                    "InstanceType": "t2.medium", 
+                    "NetworkInterfaces": [
+                        {
+                            "Status": "in-use", 
+                            "MacAddress": "12:6b:cb:f9:91:8c", 
+                            "SourceDestCheck": true, 
+                            "VpcId": "vpc-9920dce0", 
+                            "Description": "", 
+                            "NetworkInterfaceId": "eni-070f81b1bfb85bb55", 
+                            "PrivateIpAddresses": [
+                                {
+                                    "PrivateDnsName": "ip-172-31-77-176.ec2.internal", 
+                                    "PrivateIpAddress": "172.31.77.176", 
+                                    "Primary": true, 
+                                    "Association": {
+                                        "PublicIp": "54.175.40.48", 
+                                        "PublicDnsName": "ec2-54-175-40-48.compute-1.amazonaws.com", 
+                                        "IpOwnerId": "amazon"
+                                    }
+                                }
+                            ], 
+                            "PrivateDnsName": "ip-172-31-77-176.ec2.internal", 
+                            "Attachment": {
+                                "Status": "attached", 
+                                "DeviceIndex": 0, 
+                                "DeleteOnTermination": true, 
+                                "AttachmentId": "eni-attach-099ce05066b20deeb", 
+                                "AttachTime": "2018-09-27T03:00:31.000Z"
+                            }, 
+                            "Groups": [
+                                {
+                                    "GroupName": "SSHAccess", 
+                                    "GroupId": "sg-06e7449f278b62c42"
+                                }
+                            ], 
+                            "Ipv6Addresses": [], 
+                            "OwnerId": "675675802741", 
+                            "PrivateIpAddress": "172.31.77.176", 
+                            "SubnetId": "subnet-b928e495", 
+                            "Association": {
+                                "PublicIp": "54.175.40.48", 
+                                "PublicDnsName": "ec2-54-175-40-48.compute-1.amazonaws.com", 
+                                "IpOwnerId": "amazon"
+                            }
+                        }
+                    ], 
+                    "SourceDestCheck": true, 
+                    "Placement": {
+                        "Tenancy": "default", 
+                        "GroupName": "", 
+                        "AvailabilityZone": "us-east-1a"
+                    }, 
+                    "Hypervisor": "xen", 
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/xvda", 
+                            "Ebs": {
+                                "Status": "attached", 
+                                "DeleteOnTermination": true, 
+                                "VolumeId": "vol-0cf1e7de7102e96c0", 
+                                "AttachTime": "2018-09-27T03:00:31.000Z"
+                            }
+                        }
+                    ], 
+                    "Architecture": "x86_64", 
+                    "RootDeviceType": "ebs", 
+                    "IamInstanceProfile": {
+                        "Id": "AIPAIONQ4AMROA6LLD2TS", 
+                        "Arn": "arn:aws:iam::675675802741:instance-profile/NanaSSM"
+                    }, 
+                    "RootDeviceName": "/dev/xvda", 
+                    "VirtualizationType": "hvm", 
+                    "Tags": [
+                        {
+                            "Value": "Instance4", 
+                            "Key": "aws:cloudformation:logical-id"
+                        }, 
+                        {
+                            "Value": "HRAppLinux", 
+                            "Key": "Name"
+                        }, 
+                        {
+                            "Value": "Production", 
+                            "Key": "HRAppEnvironment"
+                        }, 
+                        {
+                            "Value": "LinuxInstanceStack", 
+                            "Key": "aws:cloudformation:stack-name"
+                        }, 
+                        {
+                            "Value": "Production", 
+                            "Key": "Environment"
+                        }, 
+                        {
+                            "Value": "arn:aws:cloudformation:us-east-1:675675802741:stack/LinuxInstanceStack/76ca85e0-c201-11e8-ad5c-50d5cd274ad2", 
+                            "Key": "aws:cloudformation:stack-id"
+                        }
+                    ], 
+                    "AmiLaunchIndex": 0
+                }
+            ], 
+            "ReservationId": "r-07b8c3ff71309b743", 
+            "RequesterId": "043234062703", 
+            "Groups": [], 
+            "OwnerId": "675675802741"
+        }
+    ]
+}
