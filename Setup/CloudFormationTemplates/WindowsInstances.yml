@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Deploys 5 Windows instances with the same configuration, from the specified AMI.
+Outputs:
+  InstanceIds:
+    Description: InstanceIds of the instances created
+    Value: !Join [",", [!Ref Instance1, !Ref Instance2, !Ref Instance3, !Ref Instance4, !Ref Instance5]]
+Parameters:
+  InstanceProfileName:
+    Description: Name of the instance profile to attach
+    Type: String
+  KeyPairName:
+    Description: Keypair for the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription : Must be the name of an existing EC2 Keypair
+  InstanceType:
+    Description: Amazon EC2 Instance Type
+    Type: String
+    Default: t2.medium
+    AllowedValues: [
+      t2.micro,
+      t2.medium, 
+      t2.large
+    ]
+  AmiId:
+    Description: Ami Id for Windows
+    Type: String
+  VpcId:
+    Description: VPC id for the security group
+    Type: String
+Resources:
+  RDPAccessGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable RDP access via port 3389
+      GroupName: RDPAccess
+      SecurityGroupIngress:
+        CidrIp: 0.0.0.0/0
+        FromPort: 3389
+        IpProtocol: tcp
+        ToPort: 3389
+  Instance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfileName
+      SecurityGroupIds: [!GetAtt RDPAccessGroup.GroupId]
+      Tags:
+      - Key: Name
+        Value: HRAppWindows
+      - Key: HRAppEnvironment
+        Value: Production
+      - Key: Environment
+        Value: Production
+    DependsOn: RDPAccessGroup
+  Instance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfileName
+      SecurityGroupIds: [!GetAtt RDPAccessGroup.GroupId]
+      Tags:
+      - Key: Name
+        Value: HRAppWindows
+      - Key: HRAppEnvironment
+        Value: Production
+      - Key: Environment
+        Value: Production
+    DependsOn: RDPAccessGroup
+  Instance3:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfileName
+      SecurityGroupIds: [!GetAtt RDPAccessGroup.GroupId]
+      Tags:
+      - Key: Name
+        Value: HRAppWindows
+      - Key: HRAppEnvironment
+        Value: Production
+      - Key: Environment
+        Value: Production
+    DependsOn: RDPAccessGroup
+  Instance4:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfileName
+      SecurityGroupIds: [!GetAtt RDPAccessGroup.GroupId]
+      Tags:
+      - Key: Name
+        Value: HRAppWindows
+      - Key: HRAppEnvironment
+        Value: Production
+      - Key: Environment
+        Value: Production
+    DependsOn: RDPAccessGroup
+  Instance5:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfileName
+      SecurityGroupIds: [!GetAtt RDPAccessGroup.GroupId]
+      Tags:
+      - Key: Name
+        Value: HRAppWindows
+      - Key: HRAppEnvironment
+        Value: Production
+      - Key: Environment
+        Value: Production
+    DependsOn: RDPAccessGroup  

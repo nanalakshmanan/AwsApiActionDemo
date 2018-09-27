@@ -1,0 +1,15 @@
+$RoleName = 'SendMailLambdaRole'
+$EmailLambdaStack = 'EmailLambdaStack'
+$InstanceProfileName = 'NanaSSM'
+$KeyPairName = 'NanasTestKeyPair'
+$LinuxInstanceStack = 'LinuxInstanceStack'
+$WindowsInstanceStack = 'WindowsInstanceStack'
+$LinuxAmiId = 'ami-97785bed'
+$WindowsAmidId = 'ami-4176943c'
+$VpcId = 'vpc-9920dce0'
+$LambdaFunctionName = 'SendEmail'
+
+
+$StartEC2InstanceDoc = 'Nana-StartEC2Instance'
+$CheckCTLoggingStatusDoc = 'Nana-CheckCloudTrailLoggingStatus'
+$AuditCTLoggingDoc = 'Nana-AuditCloudTrailLogging'

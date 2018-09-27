@@ -1,0 +1,48 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Checks to see if cloud trail logging is enabled in the account
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  Name:
+    type: String
+    description: (Required) Name of cloud trail
+  Email:
+    type: String
+    description: (Required) Email to notify if logging is not enabled
+    default: "nanalakshmanan.test@gmail.com"
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  # aws cloudtrail get-trail-status --name <trailname>
+  - name: AssertTrailStatus
+    action: aws:assertAwsResourceProperty
+    inputs:
+      Service: cloudtrail
+      Api: GetTrailStatus
+      Name: "{{Name}}"
+      PropertySelector: "$.IsLogging"
+      DesiredValues: ["True"]  
+    onFailure: step:SendEmail
+    isCritical: false
+    isEnd: true 
+
+  # send an email if cloud trail logging is not enabled
+  - name: SendEmail
+    action: aws:invokeLambdaFunction
+    inputs:
+      FunctionName: SendEmail 
+      Payload: |-
+          {
+            "name": "{{Name}}",
+            "to": "{{Email}}",
+            "subject": "CloudTrail Logging Not Enabled",
+            "message": "CloudTrail logging not enabled for {{Name}}. Click on this link to learn how to enable cloud trail logging https://docs.aws.amazon.com/awscloudtrail/latest/userguide/turn-on-cloudtrail-in-additional-accounts.html "
+          }
+    isEnd: true 
+...

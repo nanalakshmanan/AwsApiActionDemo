@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Creates a role that enables sending email through SES and a lambda function that sends the email
+Outputs:
+  FunctionName:
+    Description: Name of the lambda function created
+    Value: !Ref LambdaFunction
+Parameters:
+  RoleName:
+    Description: Name of the role to create
+    Type: String
+  FunctionName:
+    Description: Name of the lambda function to create
+    Type: String
+Resources:
+  InstanceProfile:
+    Properties:
+      Path: "/"
+      Roles: [!Ref LambdaRole]
+    Type: AWS::IAM::InstanceProfile
+    DependsOn: LambdaRole
+  LambdaRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
+      Path: "/"
+      RoleName: !Ref RoleName 
+    Type: AWS::IAM::Role
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: "\"Lambda handler for sending email\"\r\nimport boto3\r\n        \r\ndef lambda_handler(event, context):\r\n    \"Sends email message from lambda using SES\"\r\n    if not (('name' in event) and ('to' in event) and ('message' in event)):\r\n        return {\"code\": 1, \"message\": \"Must preovide all values\"}\r\n\r\n    if event['name'] != \"\" and event['to'] != \"\":\r\n        name = event['name']\r\n        toEmail = event['to']\r\n        subject = event['subject']\r\n        message = event['message']\r\n\r\n        fromEmail = \"nanalakshmanan.test@gmail.com\"\r\n        replyTo = fromEmail\r\n        \r\n        subject = \"[\" + name + \"]\" + \":\" + subject \r\n        \r\n        client = boto3.client('ses')\r\n        response = client.send_email(\r\n\t\t\tSource=fromEmail,\r\n\t\t\tDestination={\r\n\t\t\t\t'ToAddresses': [\r\n\t\t\t\t\ttoEmail,\r\n\t\t\t\t],\r\n\t\t\t},\r\n\t\t\tMessage={\r\n\t\t\t\t'Subject': {\r\n\t\t\t\t\t'Data': subject,\r\n\t\t\t\t\t'Charset': 'utf8'\r\n\t\t\t\t},\r\n\t\t\t\t'Body': {\r\n\t\t\t\t\t'Text': {\r\n\t\t\t\t\t\t'Data': message,\r\n\t\t\t\t\t\t'Charset': 'utf8'\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t)\r\n\t\t\t\r\n        print (response['MessageId'])\r\n        return {'code': 0, 'message': 'success'}"
+      Role: !Join ["", ["arn:aws:iam::", !Ref "AWS::AccountId", ":role/", !Ref RoleName ]]
+      Timeout: 60
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      MemorySize: 128
+      FunctionName: !Ref FunctionName
+    DependsOn: InstanceProfile

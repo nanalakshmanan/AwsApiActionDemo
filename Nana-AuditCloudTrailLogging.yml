@@ -1,0 +1,39 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Checks to see if cloud trail logging is enabled in the account
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  # get all trails
+  # aws cloudtrail describe-trails
+  - name: GetAllTrails
+    action: aws:executeAwsApi
+    inputs:
+      Service: cloudtrail
+      Api: DescribeTrails
+    outputs:
+      - Name: TrailNames
+        Type: StringList
+        Selector: "$.trailList..Name"
+  
+  # check status on each trail
+  - name: CheckLoggingStatus
+    action: aws:executeAutomation
+    inputs:
+      DocumentName: "Nana-CheckCloudTrailLoggingStatus"
+      DocumentVersion: "1"
+      RuntimeParameters:
+        Email: "nanalakshmanan.test@gmail.com"
+      Targets: 
+        - Key: "ParameterValues"
+          Values: "{{GetAllTrails.TrailNames}}"
+      TargetParameterName: "Name"
+...
