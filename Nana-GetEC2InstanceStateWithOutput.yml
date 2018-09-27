@@ -1,0 +1,34 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Start EC2 instance
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  InstanceId:
+    type: String
+    description: (Required) EC2 Instance to start
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  # Get the current state of the instance
+  # API: aws ec2 describe-instances --instance-ids <instance id>
+  - name: GetState
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: DescribeInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+    outputs:
+      - Name: State
+        Type: String
+        Selector: "$.Reservations[0].Instances[0].State.Name"
+  
+  - outputs:
+      - "{{GetState.State}}"
+...

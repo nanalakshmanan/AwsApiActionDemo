@@ -1,0 +1,28 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Start EC2 instance
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  InstanceId:
+    type: String
+    description: (Required) EC2 Instance to start
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  
+  # Start an EC2 instance using start instance API
+  # API: aws ec2 start-instances --instance-ids <instance id>
+  - name: StartInstance
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: StartInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+...

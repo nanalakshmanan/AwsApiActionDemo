@@ -4,7 +4,9 @@ param(
 . "./Settings.ps1"
 
 $AllStacks = @($EmailLambdaStack, $LinuxInstanceStack, $WindowsInstanceStack)
-$AllDocs = @($StartEC2InstanceDoc, $CheckCTLoggingStatusDoc, $AuditCTLoggingDoc)
+$AllDocs = @($StartEC2InstanceDoc, $CheckCTLoggingStatusDoc, $AuditCTLoggingDoc, $ExecuteStartEC2InstanceDoc, $GetEC2InstanceStateDoc, $GetEC2InstanceStateOutputDoc,$StartEC2WaitForRunningDoc)
+
+
 
 function Wait-Stack
 {

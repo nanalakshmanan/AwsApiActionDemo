@@ -1,0 +1,42 @@
+#
+# Copyright 2018 Nana Lakshmanan. All Rights Reserved.
+#
+#
+---
+description: Start EC2 instance
+schemaVersion: "0.3"
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  InstanceId:
+    type: String
+    description: (Required) EC2 Instance to start
+  AutomationAssumeRole:
+    type: String
+    description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+    default: ""
+mainSteps:
+  
+  # Start an EC2 instance using start instance API
+  # API: aws ec2 start-instances --instance-ids <instance id>
+  - name: StartInstance
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: StartInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+  
+  # Wait until EC2 instance state is running
+  # API: aws ec2 describe-instances --instance-ids <instance id>
+  - name: WaitUntilRunning
+    action: aws:waitForAwsResourceProperty
+    maxAttempts: 10
+    timeoutSeconds: 600
+    inputs:
+      Service: ec2
+      Api: DescribeInstances
+      InstanceIds: 
+        - "{{InstanceId}}"
+      PropertySelector: "$.Reservations[0].Instances[0].State.Name"
+      DesiredValues: ["running"]
+...

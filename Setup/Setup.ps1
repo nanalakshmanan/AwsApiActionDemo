@@ -74,3 +74,15 @@ New-SSMDocument -Content $contents -DocumentType Automation -Name $CheckCTLoggin
 
 $contents = Get-Content ../Nana-AuditCloudTrailLogging.yml -Raw
 New-SSMDocument -Content $contents -DocumentType Automation -Name $AuditCTLoggingDoc -DocumentFormat YAML -TargetType '/AWS::CloudTrail::Trail'
+
+$contents = Get-Content "../$ExecuteStartEC2InstanceDoc.yml" -Raw
+New-SSMDocument -Content $contents -DocumentType Automation -Name $ExecuteStartEC2InstanceDoc -DocumentFormat YAML -TargetType '/AWS::EC2::Instance'
+
+$contents = Get-Content "../$GetEC2InstanceStateDoc.yml" -Raw
+New-SSMDocument -Content $contents -DocumentType Automation -Name $GetEC2InstanceStateDoc -DocumentFormat YAML -TargetType '/AWS::EC2::Instance'
+
+$contents = Get-Content "../$GetEC2InstanceStateOutputDoc.yml" -Raw
+New-SSMDocument -Content $contents -DocumentType Automation -Name $GetEC2InstanceStateOutputDoc -DocumentFormat YAML -TargetType '/AWS::EC2::Instance'
+
+$contents = Get-Content "../$StartEC2WaitForRunningDoc.yml" -Raw
+New-SSMDocument -Content $contents -DocumentType Automation -Name $StartEC2WaitForRunningDoc -DocumentFormat YAML -TargetType '/AWS::EC2::Instance'
